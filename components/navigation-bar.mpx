@@ -1,0 +1,150 @@
+<template>
+    <view>
+        <view
+            wx:if="{{borderOnly}}"
+            style="width: 100%; border-top: 1px #cfd6e3 solid; position: fixed; z-index: 999"
+        ></view>
+        <view wx:else class="nav-bar" style="height:{{navBarHeight}}px;width:100%;;position:fixed">
+            <view
+                style="position: absolute; width: 100%; height: 100%; background: {{bgColor}}; z-index: -1;opacity:{{renderOpacity}}"
+            ></view>
+            <view
+                class="capsule"
+                style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                height:{{capsuleHeight}}px;width:100%;margin-bottom:{{capsuleBottom}}px;line-height:{{capsuleHeight}}px;"
+            >
+                <mp-icon
+                    wx:if="{{backBtn}}"
+                    icon="back"
+                    color="{{titleColor}}"
+                    size="{{13}}"
+                    style="padding-left: 16px; width: 15px; height: 34px; padding-right: 14px"
+                    bindtap="navigateBack"
+                ></mp-icon>
+                <view wx:else style="padding-left: 16px"></view>
+                <view
+                    style="display: flex; align-items: center; justify-content: flex-start; flex: 1"
+                >
+                    <view style="color: {{titleColor}};font-size:{{titleSize}}; ">
+                        {{ title }}
+                    </view>
+                </view>
+                <view style="width: 15px; padding-right: 16px; padding-left: 14px"></view>
+            </view>
+        </view>
+        <view wx:if="{{useHolder}}" style="height:{{navBarHeight}}px;width:100%;"></view>
+    </view>
+</template>
+
+<script lang="ts">
+    import { computed, createComponent, ref, toRefs } from '@mpxjs/core'
+    import { storeToRefs } from '@mpxjs/pinia'
+
+    import { useHperStore } from '../store/helper'
+
+    createComponent({
+        properties: {
+            // 开始渐变的高度
+            startFade: {
+                type: Number,
+                value: 0
+            },
+            // 是否启用占位
+            useHolder: {
+                type: Boolean,
+                value: true
+            },
+            // 渐变高度过渡值
+            fadeHeight: {
+                type: Number,
+                value: 50
+            },
+
+            title: {
+                type: String,
+                value: ''
+            },
+
+            titleSize: {
+                type: String,
+                value: '17.5px'
+            },
+
+            titleColor: {
+                type: String,
+                value: '#ffffff'
+            },
+
+            titleAlign: {
+                type: String,
+                value: 'center' // left center
+            },
+
+            // 背景颜色
+            bgColor: {
+                type: String,
+                value: '#000000'
+            },
+            // 初始透明度
+            opacity: {
+                type: Number,
+                value: 1
+            },
+            borderOnly: {
+                type: Boolean,
+                value: false
+            }
+        },
+        setup(props) {
+            const appStore = useHperStore()
+
+            const { startFade, fadeHeight, opacity } = toRefs(props)
+            const renderOpacity = ref(opacity.value)
+
+            const setPageScrollTop = (scrollTop: number) => {
+                if (scrollTop > startFade.value) {
+                    renderOpacity.value = (scrollTop - startFade.value) / fadeHeight.value
+                } else {
+                    renderOpacity.value = 0
+                }
+            }
+
+            const backBtn = computed(() => {
+                return getCurrentPages().length > 1
+            })
+
+            const navigateBack = () => {
+                wx.navigateBack()
+
+                const length = getCurrentPages().length
+                console.log('length', length)
+            }
+
+            return { ...storeToRefs(appStore), setPageScrollTop, renderOpacity, navigateBack, backBtn }
+        }
+    })
+</script>
+
+<style lang="stylus">
+    .nav-bar
+        position fixed
+        z-index 999
+        display flex
+        justify-content space-between
+        align-items flex-end
+    .capsule
+        display flex
+        align-items center
+</style>
+
+<script type="application/json">
+    {
+        "component": true,
+        "usingComponents": {
+            "van-icon": "@vant/weapp/icon/index"
+        }
+    }
+</script>

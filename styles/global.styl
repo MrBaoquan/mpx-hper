@@ -1,0 +1,299 @@
+page {
+  // background-color: #f8f8f8;
+  background-color: white;
+}
+
+.container {
+  background-color: #f8f8f8;
+}
+
+.page-body {
+  margin: 0 0px;
+}
+
+// Flexbox Classes
+.flex-horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-vertical {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-start {
+  align-items: flex-start;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.text-title {
+  font-family: PingFang-SC-Bold;
+  // font-weight: bold;
+  font-weight: 650;
+  font-stretch: normal;
+  letter-spacing: 1px;
+  color: #080e27;
+}
+
+.top-title {
+  @extend .text-title;
+  font-size: 18px;
+}
+
+// 2nd title
+.second-title {
+  @extend .text-title;
+  font-size: 16px;
+}
+
+.small-title {
+  @extend .text-title;
+  font-size: 15px;
+}
+
+.primary-text {
+  font-family: PingFangSCMedium-Medium;
+  font-size: 15px;
+  font-weight: normal;
+  letter-spacing: -0.41px;
+}
+
+.content-text {
+  font-family: PingFangSCMedium-Medium;
+  font-size: 14px;
+  font-weight: normal;
+  letter-spacing: -0.41px;
+  color: #4e5773;
+}
+
+.caption-text {
+  font-family: PingFang-SC-Medium;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  letter-spacing: 1px;
+  color: #d4dae9;
+}
+
+.color-title {
+  color: #080e27;
+}
+
+.content-color {
+  color: #4e5773;
+}
+
+.caption-color {
+  color: #d4dae9;
+}
+
+.disabled {
+  color: #c0c4cc;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.list-item {
+  padding: 5px;
+}
+
+.rounded-borders {
+  border-radius: 5px;
+}
+
+ma-xs {
+  margin: 2px;
+}
+
+ma-sm {
+  margin: 3px;
+}
+
+ma-md {
+  margin: 5px;
+}
+
+ma-lg {
+  margin: 10px;
+}
+
+ma-xl {
+  margin: 15px;
+}
+
+pl-md {
+  padding-left: 5px;
+}
+
+pl-lg {
+  padding-left: 10px;
+}
+
+pr-md {
+  padding-right: 5px;
+}
+
+pr-lg {
+  padding-right: 10px;
+}
+
+mr-md {
+  margin-right: 5px;
+}
+
+mr-lg {
+  margin-right: 10px;
+}
+
+mt-md {
+  margin-top: 5px;
+}
+
+mt-lg {
+  margin-top: 10px;
+}
+
+// 单行文本超出部分显示省略号
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行文本超出部分显示省略号
+.ellipsis-multiline {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; // 显示行数
+  -webkit-box-orient: vertical;
+}
+
+.inline-text {
+  display: inline-block;
+  margin: 5px 3px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  vertical-align: middle;
+}
+
+.error-dot {
+  @extend .dot;
+  background-color: #e01a00;
+}
+
+.warning-dot {
+  @extend .dot;
+  background-color: orange;
+}
+
+.info-dot {
+  @extend .dot;
+  background-color: #d4d9e9;
+}
+
+.success-dot {
+  @extend .dot;
+  background-color: #37D385;
+}
+
+// 垂直分割线
+.vertical-divider {
+  width: 1px;
+  height: 100%;
+  background-color: #e8e8e8;
+  margin: 0 5px;
+}
+
+// 水平分割线
+.horizontal-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #e8e8e8;
+  margin: 5px 0;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #CFD6E3;
+}
+
+.border-top {
+  border-top: 1px solid #CFD6E3;
+}
+
+.box-view {
+  width: auto;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 10px 0px rgba(155, 171, 233, 0.3);
+  border-radius: 20px;
+  margin: 16px;
+  padding: 16px;
+}
+
+.fixed {
+  position: fixed;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.absolute-full {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
