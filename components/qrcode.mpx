@@ -1,0 +1,81 @@
+<template>
+    <view
+        wx:if="{{text===''}}"
+        style="width: {{width}}px; height: {{height}}px"
+        class="flex items-center justify-center"
+    >
+        <van-loading color="#1989fa" />
+    </view>
+    <canvas
+        wx:else
+        wx:ref="canvas"
+        type="2d"
+        style="width: {{width}}px; height: {{height}}px"
+        id="myQrcode"
+    ></canvas>
+</template>
+
+<script lang="ts">
+    import mpx, { computed, createComponent, onMounted, watch } from '@mpxjs/core'
+    import drawQrcode from 'weapp-qrcode-canvas-2d'
+    createComponent({
+        properties: {
+            text: {
+                type: String,
+                value: ''
+            },
+            width: {
+                type: Number,
+                value: 200
+            },
+            height: {
+                type: Number,
+                value: 200
+            }
+        },
+        setup(props, { createSelectorQuery }) {
+            const _qrContent = computed(() => props.text)
+
+            const _drawQrcode = (content: string) => {
+                if (content === '') return
+                const query = createSelectorQuery()
+                query
+                    .select('#myQrcode')
+                    .fields({
+                        node: true,
+                        size: true
+                    })
+                    .exec((res) => {
+                        var canvas = res[0].node
+                        drawQrcode({
+                            canvas: canvas,
+                            canvasId: 'myQrcode',
+                            width: 260,
+                            padding: 30,
+                            background: '#ffffff',
+                            foreground: '#000000',
+                            text: content
+                        })
+                    })
+            }
+
+            onMounted(() => {
+                watch(_qrContent, (newVal, oldVal) => {
+                    _drawQrcode(newVal)
+                })
+                _drawQrcode(_qrContent.value)
+            })
+            return {}
+        }
+    })
+</script>
+
+<style lang="stylus"></style>
+
+<script type="application/json">
+    {
+        "usingComponents": {
+            "van-loading": "vant/lib/loading/index"
+        }
+    }
+</script>
