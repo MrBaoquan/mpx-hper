@@ -4,6 +4,24 @@ const validateIdCard = (id: string): boolean => {
     return reg.test(id);
 };
 
+// 验证护照号码
+const validatePassport = (passport: string): boolean => {
+    const reg = /^1[45][0-9]{7}$|([P|p|S|s]\d{7}$)|([S|s|G|g|E|e]\d{8}$)|([Gg|Tt|Ss|Ll|Qq|Dd|Aa|Ff]\d{8}$)|([H|h|M|m]\d{8,10})$/;
+    return reg.test(passport);
+};
+
+// 验证港澳居民来往内地通行证
+const validateHKMacao = (hkMacao: string): boolean => {
+    const reg = /^[HMhm]{1}([0-9]{10}|[0-9]{8})$/;
+    return reg.test(hkMacao);
+};
+
+// 验证台湾居民来往大陆通行证
+const validateTaiwan = (taiwan: string): boolean => {
+    const reg = /^[0-9]{8}$/;
+    return reg.test(taiwan);
+};
+
 // 根据身份证号码获取出生日期，年龄、性别
 interface IDInfo {
     birthday: string;
@@ -29,4 +47,4 @@ const validatePhone = (phone: string): boolean => {
     return reg.test(phone);
 };
 
-export { validateIdCard, parseIDNumber, validatePhone };
+export { validateIdCard, parseIDNumber, validatePhone, validatePassport, validateHKMacao, validateTaiwan };

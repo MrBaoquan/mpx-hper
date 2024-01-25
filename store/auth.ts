@@ -8,6 +8,10 @@ const AUTH_TOKEN = 'un_auth_token';
 export const useAuthStore = defineStore('mpxhper-auth', () => {
     const api_token = ref(AUTH_TOKEN);
 
+    const hasToken = () => {
+        return api_token.value !== AUTH_TOKEN;
+    };
+
     const setToken = (token: string) => {
         console.warn('setToken', token);
         api_token.value = token;
@@ -41,5 +45,6 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         api_token,
         tryAuth,
         setToken,
+        hasToken,
     };
 });
