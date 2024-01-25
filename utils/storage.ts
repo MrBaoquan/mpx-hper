@@ -8,14 +8,14 @@ const saveToStorage = (key: string, value: any) => {
 
 const loadFromStorage = (key: string): any => {
     if (__mpx_mode__ === 'web') {
-        let _contactStr = localStorage.getItem(key);
-        if (_contactStr) {
-            return JSON.parse(_contactStr);
+        const data = localStorage.getItem(key);
+        if (data) {
+            return JSON.parse(data);
         }
     } else {
-        const usersFromCookie = wx.getStorageSync(key);
-        if (usersFromCookie) {
-            return usersFromCookie;
+        const data = wx.getStorageSync(key);
+        if (data) {
+            return data;
         }
     }
     return null;

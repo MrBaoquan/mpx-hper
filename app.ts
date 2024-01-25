@@ -5,22 +5,22 @@ import mpxFetch from '@mpxjs/fetch';
 import { useAuthStore } from './store/auth';
 
 const pinia = createPinia();
-const hperStore = useHperStore();
-const authStore = useAuthStore();
-const initMpxHper = (options: {} = {}) => {
+
+const initMpxHper = () => {
     console.log('initMpxHper');
     mpx.use(mpxFetch);
     mpx.use(pinia);
 
     mpx.xfetch.interceptors.request.use((config) => {
+        const authStore = useAuthStore();
         config.header = {
-            'x-token': authStore.$state.api_token,
-            Authorization: 'Bearer ' + authStore.$state.api_token,
+            'x-token': authStore.api_token,
+            Authorization: 'Bearer ' + authStore.api_token,
             ...config.header,
         };
         return config;
     });
-
+    const hperStore = useHperStore();
     if (__mpx_mode__ === 'wx') {
         const systemInfo = wx.getSystemInfoSync();
         const menuButtonInfo = wx.getMenuButtonBoundingClientRect();

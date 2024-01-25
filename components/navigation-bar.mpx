@@ -4,7 +4,7 @@
             wx:if="{{borderOnly}}"
             style="width: 100%; border-top: 1px #cfd6e3 solid; position: fixed; z-index: 999"
         ></view>
-        <view wx:else class="nav-bar" style="height:{{navBarHeight}}px;width:100%;;position:fixed">
+        <view wx:else class="nav-bar" style="height:{{navBarHeight}}px">
             <view
                 style="position: absolute; width: 100%; height: 100%; background: {{bgColor}}; z-index: -1;opacity:{{renderOpacity}}"
             ></view>
@@ -16,14 +16,14 @@
                 justify-content:space-between;
                 height:{{capsuleHeight}}px;width:100%;margin-bottom:{{capsuleBottom}}px;line-height:{{capsuleHeight}}px;"
             >
-                <mp-icon
+                <van-icon
                     wx:if="{{backBtn}}"
-                    icon="back"
+                    name="arrow-left"
+                    size="24px"
                     color="{{titleColor}}"
-                    size="{{13}}"
-                    style="padding-left: 16px; width: 15px; height: 34px; padding-right: 14px"
+                    custom-style="padding-left: 6px; width: 15px; height: 34px; padding-right: 14px;display:flex;align-items:center"
                     bindtap="navigateBack"
-                ></mp-icon>
+                />
                 <view wx:else style="padding-left: 16px"></view>
                 <view
                     style="display: flex; align-items: center; justify-content: flex-start; flex: 1"
@@ -118,9 +118,6 @@
 
             const navigateBack = () => {
                 wx.navigateBack()
-
-                const length = getCurrentPages().length
-                console.log('length', length)
             }
 
             return { ...storeToRefs(appStore), setPageScrollTop, renderOpacity, navigateBack, backBtn }
@@ -135,6 +132,10 @@
         display flex
         justify-content space-between
         align-items flex-end
+        width 100%
+        top 0
+        left 0
+        right 0
     .capsule
         display flex
         align-items center

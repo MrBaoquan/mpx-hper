@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-    import mpx, { computed, createComponent, onMounted, watch } from '@mpxjs/core'
+    import { computed, createComponent, onMounted, watch } from '@mpxjs/core'
     import drawQrcode from 'weapp-qrcode-canvas-2d'
     createComponent({
         properties: {
@@ -46,9 +46,9 @@
                         size: true
                     })
                     .exec((res) => {
-                        var canvas = res[0].node
+                        const canvas = res[0].node
                         drawQrcode({
-                            canvas: canvas,
+                            canvas,
                             canvasId: 'myQrcode',
                             width: 260,
                             padding: 30,
