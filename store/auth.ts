@@ -19,7 +19,6 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
     };
 
     const api_token = ref(AUTH_TOKEN);
-
     const setToken = (token: string) => {
         console.warn('setToken', token);
         api_token.value = token;
@@ -53,6 +52,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
             if (moment().diff(_updateTime, 'days') > options.expireDays) {
                 return false;
             }
+            SetAuthResultCode(0);
             return true;
         }
         return api_token.value !== AUTH_TOKEN;
@@ -60,10 +60,12 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
 
     // 用户授权后回调
     function onAuthCompleted(callback: (authCode: number) => void) {
+        console.log('onAuthCompleted', authResultCode.value);
         if (authResultCode.value !== -1) {
             callback(authResultCode.value);
         } else {
             const stopWatch = watch(authResultCode, (newVal) => {
+                console.log('onAuthCompleted', newVal);
                 if (newVal === -1) return;
                 stopWatch();
                 callback(newVal);
