@@ -72,10 +72,13 @@
 
 <style lang="stylus"></style>
 
+
+
 <script type="application/json">
     {
+        "navigationBarTitleText": "订单详情",
         "usingComponents": {
-            "van-loading": "vant/lib/loading/index"
+            "van-loading": "@vant/weapp/loading/index"
         }
     }
 </script>

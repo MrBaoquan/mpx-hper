@@ -19,12 +19,12 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
     };
 
     const api_token = ref(AUTH_TOKEN);
-    const setToken = (token: string) => {
+    const setToken = (token: string, expireTimestamp: number) => {
         console.warn('setToken', token);
         api_token.value = token;
         saveToStorage('token_data', {
             api_token: token,
-            update_time: moment().format('YYYY-MM-DD HH:mm:ss'),
+            expire_at: expireTimestamp,
         });
 
         if (checkAuthToken(token)) {
@@ -36,22 +36,26 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         return checkAuthToken(api_token.value);
     });
 
+    const isAuth = () => {
+        return checkAuthToken(api_token.value);
+    };
+
     // 尝试从缓存中读取token
-    const tryAuth = (
-        options: {
-            expireDays: number;
-        } = {
-            expireDays: 1,
-        }
-    ): boolean => {
+    const tryAuth = (): boolean => {
         const _tokenData = loadFromStorage('token_data');
         if (_tokenData !== null) {
+            if (_tokenData.expire_at === null) return false;
+            if (_tokenData.api_token === null) return false;
+
             console.log('setToken from storage', _tokenData.api_token);
             api_token.value = _tokenData.api_token;
-            const _updateTime = moment(_tokenData.update_time);
-            if (moment().diff(_updateTime, 'days') > options.expireDays) {
+
+            const _expireTime = moment(_tokenData.expire_at);
+            console.log('expire_at', _expireTime.format('YYYY-MM-DD HH:mm:ss'));
+            if (moment().diff(_expireTime, 'seconds') > 0) {
                 return false;
             }
+
             SetAuthResultCode(0);
             return true;
         }
@@ -80,6 +84,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
 
     return {
         api_token,
+        isAuth,
         isAuthed,
         authResultCode,
         tryAuth,
