@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
     };
 
     const api_token = ref(AUTH_TOKEN);
-    const setToken = (token: string, expireTimestamp: number) => {
+    const setToken = (token: string, expireTimestamp = 0) => {
         console.warn('setToken', token);
         api_token.value = token;
         saveToStorage('token_data', {
@@ -68,10 +68,11 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         if (authResultCode.value !== -1) {
             callback(authResultCode.value);
         } else {
-            const stopWatch = watch(authResultCode, (newVal) => {
+            // const stopWatch =
+            watch(authResultCode, (newVal) => {
                 console.log('onAuthCompleted', newVal);
                 if (newVal === -1) return;
-                stopWatch();
+                // stopWatch();
                 callback(newVal);
             });
         }
