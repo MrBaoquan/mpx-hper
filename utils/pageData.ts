@@ -11,6 +11,12 @@ class PageData {
 
     public list = ref<any[]>([]);
 
+    // 刷新数据
+    public refresh() {
+        this.page.value = 1;
+        this.list.value = [];
+    }
+
     public get unrefData() {
         return {
             page: this.page.value,
