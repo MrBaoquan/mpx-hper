@@ -20,12 +20,13 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
 
     const api_token = ref(AUTH_TOKEN);
     const setToken = (token: string, expireTimestamp: number) => {
-        console.warn('setToken', token);
         api_token.value = token;
         saveToStorage('token_data', {
             api_token: token,
             expire_at: expireTimestamp,
         });
+
+        console.log(`保存token: ${token}, 有效期至: ${moment(expireTimestamp).format('YYYY-MM-DD HH:mm:ss')}`);
 
         if (checkAuthToken(token)) {
             SetAuthResultCode(0);
@@ -47,11 +48,11 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
             if (_tokenData.expire_at === null) return false;
             if (_tokenData.api_token === null) return false;
 
-            console.log('setToken from storage', _tokenData.api_token);
             api_token.value = _tokenData.api_token;
 
             const _expireTime = moment(_tokenData.expire_at);
-            console.log('expire_at', _expireTime.format('YYYY-MM-DD HH:mm:ss'));
+            console.log('token 过期时间: ' + _expireTime.format('YYYY-MM-DD HH:mm:ss'));
+
             if (moment().diff(_expireTime, 'seconds') > 0) {
                 return false;
             }
