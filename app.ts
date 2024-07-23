@@ -22,14 +22,7 @@ const initMpxHper = () => {
     });
     const hperStore = useHperStore();
     if (__mpx_mode__ === 'wx') {
-        const systemInfo = wx.getSystemInfoSync();
-        const menuButtonInfo = wx.getMenuButtonBoundingClientRect();
-        const navBarHeight = (menuButtonInfo.top - systemInfo.statusBarHeight) * 2 + menuButtonInfo.height + systemInfo.statusBarHeight;
-        const menuBottom = menuButtonInfo.top - systemInfo.statusBarHeight;
-        const menuHeight = menuButtonInfo.height;
-        hperStore.$state.navBarHeight = navBarHeight;
-        hperStore.$state.capsuleHeight = menuHeight;
-        hperStore.$state.capsuleBottom = menuBottom;
+        hperStore.refreshSystemSettings();
     }
 };
 

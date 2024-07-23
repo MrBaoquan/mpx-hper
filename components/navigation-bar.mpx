@@ -6,7 +6,7 @@
         ></view>
         <view wx:else class="nav-bar" style="height:{{navBarHeight}}px;width:100%;">
             <view
-                style="position: absolute; width: 100%; height: 100%; background: {{bgColor}}; z-index: -1;opacity:{{renderOpacity}}"
+                style="position: absolute; width: 100%; height: 100%; background: {{bgColor}}; z-index: -1; opacity:{{renderOpacity}}"
             ></view>
             <view
                 class="capsule"
@@ -100,9 +100,7 @@
         },
         setup(props) {
             const appStore = useHperStore()
-
             const { startFade, fadeHeight, opacity } = toRefs(props)
-            console.log(opacity)
             const renderOpacity = ref(opacity.value)
 
             const setPageScrollTop = (scrollTop: number) => {

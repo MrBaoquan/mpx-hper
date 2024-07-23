@@ -19,6 +19,12 @@ export function getAvatarByIdCard(idCard: string): string {
     }
 }
 
+// 判断用户是否已经成年
+export function isAdult(idCard: string): boolean {
+    const _idInfo = parseIDNumber(idCard);
+    return _idInfo.age >= 18;
+}
+
 // 根据日期获取星期，如果是今天|明天|后天则返回对应的文字
 export function getWeekByDate(date: string): string {
     const _date = moment(date);
@@ -36,4 +42,16 @@ export function getWeekByDate(date: string): string {
     } else {
         return _weeks[_date.day()];
     }
+}
+
+export function numToChinese(num): string {
+    const chineseNum = ['一', '二', '三', '四', '五', '六', '七', '八', '九'];
+    return chineseNum[num - 1];
+}
+
+// 将对象转为键值数组
+export function objToArr(obj: any) {
+    return Object.entries(obj).map(([key, value]) => {
+        return { key, value };
+    });
 }
