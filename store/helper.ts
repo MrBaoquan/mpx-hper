@@ -47,6 +47,7 @@ export const useHperStore = defineStore('helper', () => {
         windowWidth,
         contentHeight,
         screenHeight,
+        statusBarHeight,
         refreshSystemSettings,
     };
 });
