@@ -6,13 +6,7 @@
     >
         <van-loading color="#1989fa" />
     </view>
-    <canvas
-        wx:else
-        wx:ref="canvas"
-        type="2d"
-        style="width: {{width}}px; height: {{height}}px"
-        id="myQrcode"
-    ></canvas>
+    <canvas wx:else wx:ref="canvas" type="2d" style="width: {{width}}px; height: {{height}}px" id="myQrcode"></canvas>
 </template>
 
 <script lang="ts">
@@ -38,6 +32,7 @@
 
             const _drawQrcode = (content: string) => {
                 if (content === '') return
+                console.log(`内容${content}`)
                 const query = createSelectorQuery()
                 query
                     .select('#myQrcode')
