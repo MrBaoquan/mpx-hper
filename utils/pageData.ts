@@ -15,6 +15,7 @@ class PageData {
     public refresh() {
         this.page.value = 1;
         this.list.value = [];
+        this.total.value = 0;
     }
 
     public get unrefData() {
