@@ -1,12 +1,8 @@
 <template>
-    <view
-        wx:if="{{text===''}}"
-        style="width: {{width}}px; height: {{height}}px"
-        class="flex items-center justify-center"
-    >
+    <view wx:if="{{text===''}}" style="width: {{width}}px; height: {{height}}px" class="flex items-center justify-center">
         <van-loading color="#1989fa" />
     </view>
-    <canvas wx:else wx:ref="canvas" type="2d" style="width: {{width}}px; height: {{height}}px" id="myQrcode"></canvas>
+    <canvas wx:else wx:ref="canvas" type="2d" style="width: {{width}}px; height: {{height}}px" id="{{qid}}"></canvas>
 </template>
 
 <script lang="ts">
@@ -14,6 +10,10 @@
     import drawQrcode from 'weapp-qrcode-canvas-2d'
     createComponent({
         properties: {
+            qid: {
+                type: String,
+                value: 'myQrcode'
+            },
             text: {
                 type: String,
                 value: ''
@@ -29,13 +29,13 @@
         },
         setup(props, { createSelectorQuery }) {
             const _qrContent = computed(() => props.text)
+            const qid = computed(() => props.qid)
 
             const _drawQrcode = (content: string) => {
                 if (content === '') return
-                console.log(`内容${content}`)
                 const query = createSelectorQuery()
                 query
-                    .select('#myQrcode')
+                    .select(`#${qid.value}`)
                     .fields({
                         node: true,
                         size: true
@@ -44,12 +44,39 @@
                         const canvas = res[0].node
                         drawQrcode({
                             canvas,
-                            canvasId: 'myQrcode',
+                            canvasId: qid.value,
                             width: 260,
                             padding: 30,
                             background: '#ffffff',
                             foreground: '#000000',
                             text: content
+                        })
+                    })
+            }
+
+            const save = () => {
+                createSelectorQuery()
+                    .select(`#${qid.value}`)
+                    .fields({
+                        node: true,
+                        size: true
+                    })
+                    .exec((res) => {
+                        const canvas = res[0].node
+                        wx.canvasToTempFilePath({
+                            canvas,
+                            success(res) {
+                                wx.saveImageToPhotosAlbum({
+                                    filePath: res.tempFilePath,
+                                    success() {
+                                        wx.showToast({
+                                            title: '保存成功',
+                                            icon: 'success',
+                                            duration: 2000
+                                        })
+                                    }
+                                })
+                            }
                         })
                     })
             }
@@ -60,7 +87,7 @@
                 })
                 _drawQrcode(_qrContent.value)
             })
-            return {}
+            return { save }
         }
     })
 </script>

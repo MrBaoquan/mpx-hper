@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { ref, watch } from '@mpxjs/core';
 import { defineStore } from '@mpxjs/pinia';
-import { loadFromStorage, saveToStorage } from '../utils/storage';
+import { loadFromStorage, removeFromStorage, saveToStorage } from '../utils/storage';
 import * as moment from 'moment';
 import { computed } from 'vue';
 
@@ -32,6 +32,11 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         if (checkAuthToken(token)) {
             SetAuthResultCode(0);
         }
+    };
+
+    const clearToken = () => {
+        api_token.value = AUTH_TOKEN;
+        removeFromStorage('token_data');
     };
 
     const isAuthed = computed(() => {
@@ -92,6 +97,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         authResultCode,
         tryAuth,
         setToken,
+        clearToken,
         onAuthCompleted,
         SetAuthResultCode,
         openID,
