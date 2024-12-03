@@ -1,4 +1,4 @@
-import { ref } from '@mpxjs/core';
+import { computed, ref } from '@mpxjs/core';
 import { defineStore } from '@mpxjs/pinia';
 
 export const useHperStore = defineStore('helper', () => {
@@ -9,6 +9,15 @@ export const useHperStore = defineStore('helper', () => {
     // windowHeight
     const windowHeight = ref(0);
     const windowWidth = ref(0);
+
+    // 屏幕宽高比
+    const ratio = computed(() => {
+        return windowWidth.value / windowHeight.value;
+    });
+
+    const getHeight = (width: number) => {
+        return width * ratio.value;
+    };
 
     // 去除导航栏的高度
     const contentHeight = ref(0);
@@ -34,9 +43,7 @@ export const useHperStore = defineStore('helper', () => {
 
         statusBarHeight.value = windowInfo.statusBarHeight;
 
-        console.log(
-            `屏幕高度: ${windowInfo.screenHeight}, 窗口高度: ${windowInfo.windowHeight},  导航栏高度: ${navBarHeight.value}, 胶囊高度: ${capsuleHeight.value}`
-        );
+        console.log(`屏幕高度: ${windowInfo.screenHeight}, 窗口高度: ${windowInfo.windowHeight},  导航栏高度: ${navBarHeight.value}, 胶囊高度: ${capsuleHeight.value}`);
     };
 
     return {
@@ -49,5 +56,7 @@ export const useHperStore = defineStore('helper', () => {
         screenHeight,
         statusBarHeight,
         refreshSystemSettings,
+        getHeight,
+        ratio,
     };
 });
