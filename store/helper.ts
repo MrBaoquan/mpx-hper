@@ -27,7 +27,9 @@ export const useHperStore = defineStore('helper', () => {
 
     const refreshSystemSettings = () => {
         const windowInfo = wx.getWindowInfo();
+        console.log(windowInfo);
         const menuButtonInfo = wx.getMenuButtonBoundingClientRect();
+        console.log(menuButtonInfo);
         const _navBarHeight = (menuButtonInfo.top - windowInfo.statusBarHeight) * 2 + menuButtonInfo.height + windowInfo.statusBarHeight;
         const _menuBottom = menuButtonInfo.top - windowInfo.statusBarHeight;
         const _menuHeight = menuButtonInfo.height;
