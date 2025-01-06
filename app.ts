@@ -6,7 +6,15 @@ import { useAuthStore } from './store/auth';
 
 const pinia = createPinia();
 
-const initMpxHper = () => {
+interface MHOption {
+    onResponse: (...args: any[]) => any;
+}
+
+const defaultOption: MHOption = {
+    onResponse: (response) => response,
+};
+
+const initMpxHper = (option: MHOption = defaultOption) => {
     console.log('initMpxHper');
     mpx.use(mpxFetch);
     mpx.use(pinia);
@@ -18,8 +26,11 @@ const initMpxHper = () => {
             Authorization: 'Bearer ' + authStore.api_token,
             ...config.header,
         };
+
         return config;
     });
+    mpx.xfetch.interceptors.response.use(option.onResponse);
+
     const hperStore = useHperStore();
     if (__mpx_mode__ === 'wx') {
         hperStore.refreshSystemSettings();
