@@ -59,3 +59,27 @@ export function objToArr(obj: any) {
 export function generateRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-inferrable-types
+export function debounce<T extends (...args: any[]) => void>(func: T, wait: number, immediate: boolean = false): (...args: Parameters<T>) => void {
+    let timeout: ReturnType<typeof setTimeout> | null;
+
+    return function (...args: Parameters<T>): void {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+
+        const callNow = immediate && !timeout;
+
+        timeout = setTimeout(() => {
+            timeout = null;
+            if (!immediate) {
+                func(...args);
+            }
+        }, wait);
+
+        if (callNow) {
+            func(...args);
+        }
+    };
+}
