@@ -20,9 +20,9 @@ export function getAvatarByIdCard(idCard: string): string {
 }
 
 // 判断用户是否已经成年
-export function isAdult(idCard: string): boolean {
-    const _idInfo = parseIDNumber(idCard);
-    return _idInfo.age >= 18;
+export function isAdult(birthday: string): boolean {
+    const _age = moment().diff(birthday, 'years');
+    return _age >= 18;
 }
 
 // 根据日期获取星期，如果是今天|明天|后天则返回对应的文字
