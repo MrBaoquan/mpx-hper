@@ -37,6 +37,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
     const clearToken = () => {
         api_token.value = AUTH_TOKEN;
         removeFromStorage('token_data');
+        SetAuthResultCode(-1);
     };
 
     const isAuthed = computed(() => {
