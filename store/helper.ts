@@ -22,6 +22,7 @@ export const useHperStore = defineStore('helper', () => {
     // 去除导航栏的高度
     const contentHeight = ref(0);
     const screenHeight = ref(0);
+    const screenWidth = ref(0);
 
     const statusBarHeight = ref(0);
 
@@ -42,6 +43,7 @@ export const useHperStore = defineStore('helper', () => {
         windowWidth.value = windowInfo.windowWidth;
         contentHeight.value = windowInfo.windowHeight;
         screenHeight.value = windowInfo.screenHeight;
+        screenWidth.value = windowInfo.screenWidth;
 
         statusBarHeight.value = windowInfo.statusBarHeight;
 
@@ -55,6 +57,7 @@ export const useHperStore = defineStore('helper', () => {
         windowHeight,
         windowWidth,
         contentHeight,
+        screenWidth,
         screenHeight,
         statusBarHeight,
         refreshSystemSettings,
