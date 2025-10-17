@@ -25,6 +25,14 @@
             height: {
                 type: Number,
                 value: 200
+            },
+            background: {
+                type: String,
+                value: '#ffffff'
+            },
+            foreground: {
+                type: String,
+                value: '#000000'
             }
         },
         setup(props, { createSelectorQuery }) {
@@ -47,8 +55,8 @@
                             canvasId: qid.value,
                             width: 260,
                             padding: 30,
-                            background: '#ffffff',
-                            foreground: '#000000',
+                            background: props.background,
+                            foreground: props.foreground,
                             text: content
                         })
                     })
