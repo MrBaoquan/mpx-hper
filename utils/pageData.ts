@@ -11,6 +11,19 @@ class PageData {
 
     public list = ref<any[]>([]);
 
+    constructor(customPageSize?: number) {
+        if (customPageSize !== undefined && customPageSize > 0) {
+            this.pageSize.value = customPageSize;
+        }
+    }
+
+    // 设置自定义每页数量
+    public setPageSize(size: number) {
+        if (size > 0) {
+            this.pageSize.value = size;
+        }
+    }
+
     // 刷新数据
     public refresh() {
         this.page.value = 1;
