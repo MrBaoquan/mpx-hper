@@ -1,9 +1,9 @@
-/* eslint-disable camelcase */
 import { ref, watch } from '@mpxjs/core';
 import { defineStore } from '@mpxjs/pinia';
 import { loadFromStorage, removeFromStorage, saveToStorage } from '../utils/storage';
-import * as moment from 'moment';
+import dayjs from 'dayjs';
 import { computed } from 'vue';
+import { normalizeUserInfo } from '../../utils/validator';
 
 const AUTH_TOKEN = 'un_auth_token';
 
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
             expire_at: expireTimestamp,
         });
 
-        console.log(`保存token: ${token}, 有效期至: ${moment(expireTimestamp).format('YYYY-MM-DD HH:mm:ss')}`);
+        console.log(`保存token: ${token}, 有效期至: ${dayjs(expireTimestamp).format('YYYY-MM-DD HH:mm:ss')}`);
 
         if (checkAuthToken(token)) {
             SetAuthResultCode(0);
@@ -57,10 +57,10 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
 
             api_token.value = _tokenData.api_token;
 
-            const _expireTime = moment(_tokenData.expire_at);
+            const _expireTime = dayjs(_tokenData.expire_at);
             console.log('token 过期时间: ' + _expireTime.format('YYYY-MM-DD HH:mm:ss'));
 
-            if (moment().diff(_expireTime, 'seconds') > 0) {
+            if (dayjs().diff(_expireTime, 'seconds') > 0) {
                 return false;
             }
 
@@ -91,6 +91,24 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         openID.value = id;
     }
 
+    /**
+     * 转换用户信息
+     * @param rawUserData 原始用户数据
+     * @returns 转换后的用户信息
+     */
+    function transformUserData(rawUserData: any) {
+        console.log('🔧 transformUserData - 输入数据:', rawUserData);
+
+        try {
+            const result = normalizeUserInfo(rawUserData);
+            console.log('🔧 transformUserData - 输出数据:', result);
+            return result;
+        } catch (error: any) {
+            console.error('🔧 transformUserData - 转换异常:', error);
+            throw error;
+        }
+    }
+
     return {
         api_token,
         isAuth,
@@ -103,5 +121,6 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         SetAuthResultCode,
         openID,
         setOpenID,
+        transformUserData,
     };
 });

@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export default {
     data: {
         navBarOpacity: 0,
     },
-
-    onPageScroll({ scrollTop }) {
+    onPageScroll({ scrollTop }: { scrollTop: number }) {
         if (__mpx_mode__ !== 'wx') return;
         const $refs = (this as any).$refs;
         $refs.navBar?.setPageScrollTop(scrollTop);
