@@ -38,6 +38,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         api_token.value = AUTH_TOKEN;
         removeFromStorage('token_data');
         SetAuthResultCode(-1);
+        resetPermissions();
     };
 
     const isAuthed = computed(() => {
@@ -91,6 +92,82 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         openID.value = id;
     }
 
+    // ===== 权限接口：角色-权限映射与校验 =====
+    // 在通用框架中不限定具体权限键，交由业务项目定义
+    type FeatureKey = string;
+
+    interface RolePermissionEntry {
+        role: string;
+        features: FeatureKey[];
+    }
+
+    // 示例默认角色权限（不包含具体业务权限）。
+    // 真实项目应在启动时通过 configurePermissions 注入自己的映射。
+    const DEFAULT_ROLE_PERMISSIONS: RolePermissionEntry[] = [
+        { role: '管理员', features: [] },
+        { role: '游客', features: [] },
+    ];
+
+    // 可配置的角色权限及默认特性（由业务侧注入）
+    let ROLE_PERMISSION_CONFIG: RolePermissionEntry[] = [];
+    let DEFAULT_FEATURES: FeatureKey[] = [];
+    let customRoleResolver: ((user: any) => Array<{ roleName: string; venueId?: number; venueName?: string }>) | undefined;
+
+    /**
+     * 业务侧配置权限映射与角色解析
+     */
+    const configurePermissions = (opts: { roles?: RolePermissionEntry[]; defaultFeatures?: FeatureKey[]; roleResolver?: (user: any) => Array<{ roleName: string; venueId?: number; venueName?: string }> }) => {
+        ROLE_PERMISSION_CONFIG = Array.isArray(opts.roles) ? opts.roles : ROLE_PERMISSION_CONFIG;
+        DEFAULT_FEATURES = Array.isArray(opts.defaultFeatures) ? opts.defaultFeatures : DEFAULT_FEATURES;
+        customRoleResolver = opts.roleResolver || customRoleResolver;
+        console.log('🔧 permissions configured', {
+            roles: ROLE_PERMISSION_CONFIG,
+            default: DEFAULT_FEATURES,
+            hasCustomResolver: !!customRoleResolver,
+        });
+    };
+
+    const GLOBAL_SCOPE = '*';
+    const permissionMap = ref<Record<string, FeatureKey[]>>({});
+
+    const resetPermissions = () => {
+        permissionMap.value = {};
+    };
+
+    const grantPermissions = (features: FeatureKey[], scope: string = GLOBAL_SCOPE) => {
+        const existing = new Set(permissionMap.value[scope] || []);
+        features.forEach((f) => existing.add(f));
+        permissionMap.value[scope] = Array.from(existing);
+    };
+
+    const hasPermission = (feature: FeatureKey, scope?: string | number): boolean => {
+        const key = scope === undefined ? GLOBAL_SCOPE : String(scope);
+        const global = new Set(permissionMap.value[GLOBAL_SCOPE] || []);
+        const local = new Set(permissionMap.value[key] || []);
+        return global.has(feature) || local.has(feature);
+    };
+
+    const can = (feature: FeatureKey, scope?: string | number) => hasPermission(feature, scope);
+
+    const getUserRoles = (user: any): Array<{ roleName: string; venueId?: number; venueName?: string }> => {
+        if (customRoleResolver) return customRoleResolver(user) || [];
+        const roles = Array.isArray(user?.roles) ? user.roles : [];
+        return roles.map((r: any) => ({ roleName: r.roleName || r.role || '', venueId: r.venueId, venueName: r.venueName }));
+    };
+
+    const loadPermissionsFromUser = (user: any) => {
+        resetPermissions();
+        const roles = getUserRoles(user);
+        const source = ROLE_PERMISSION_CONFIG.length > 0 ? ROLE_PERMISSION_CONFIG : DEFAULT_ROLE_PERMISSIONS;
+        roles.forEach((r) => {
+            const scope = r.venueId !== undefined ? String(r.venueId) : r.venueName ? String(r.venueName) : GLOBAL_SCOPE;
+            const entry = source.find((e) => e.role === (r.roleName || '').trim());
+            const features = entry ? entry.features : DEFAULT_FEATURES;
+            if (features && features.length > 0) grantPermissions(features, scope);
+        });
+        console.log('🔐 permissions loaded:', permissionMap.value);
+    };
+
     /**
      * 转换用户信息
      * @param rawUserData 原始用户数据
@@ -102,6 +179,8 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         try {
             const result = normalizeUserInfo(rawUserData);
             console.log('🔧 transformUserData - 输出数据:', result);
+            // 根据角色加载权限
+            loadPermissionsFromUser(result);
             return result;
         } catch (error: any) {
             console.error('🔧 transformUserData - 转换异常:', error);
@@ -122,5 +201,13 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         openID,
         setOpenID,
         transformUserData,
+        // permissions api
+        permissionMap,
+        hasPermission,
+        can,
+        grantPermissions,
+        resetPermissions,
+        loadPermissionsFromUser,
+        configurePermissions,
     };
 });
