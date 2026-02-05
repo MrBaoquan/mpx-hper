@@ -5,30 +5,44 @@
             <view style="position: absolute; width: 100%; height: 100%; background: {{bgColor}}; z-index: -1; opacity:{{renderOpacity}}"></view>
             <view
                 class="capsule"
-                style="
-                display:flex;
-                align-items:center;
-                justify-content:space-between;
-                height:{{capsuleHeight}}px;width:100%;margin-bottom:{{capsuleBottom}}px;line-height:{{capsuleHeight}}px;"
+                style="display:flex;align-items:center;height:{{capsuleHeight}}px;width:100%;margin-bottom:{{capsuleBottom}}px;line-height:{{capsuleHeight}}px;"
             >
-                <van-icon
-                    wx:if="{{backBtn}}"
-                    name="arrow-left"
-                    size="24px"
-                    color="{{titleColor}}"
-                    custom-style="padding-left: 6px; width: 15px; height: 34px; padding-right: 14px;display:flex;align-items:center"
-                    bindtap="navigateBack"
-                />
-                <view wx:else style="padding-left: 16px"></view>
+                <!-- 左侧区域：支持slot自定义或使用默认布局（返回按钮+标题） -->
+                <view class="nav-bar-left" style="display: flex; align-items: center; {{ useCustomCenter ? 'width: 80px; flex-shrink: 0;' : 'flex: 1; min-width: 0;' }}">
+                    <!-- 自定义左侧内容 -->
+                    <slot name="left" wx:if="{{ useCustomLeft }}"></slot>
 
-                <van-image wx:if="{{titleIcon !== ''}}" fit="heightFix" height="{{capsuleHeight}}" src="{{titleIcon}}" />
+                    <!-- 默认左侧内容（返回按钮 + 标题） -->
+                    <view wx:else style="display: flex; align-items: center; {{ useCustomCenter ? '' : 'flex: 1; min-width: 0;' }}">
+                        <!-- 返回按钮 -->
+                        <van-icon
+                            wx:if="{{backBtn && !hideBackButton}}"
+                            name="arrow-left"
+                            size="24px"
+                            color="{{titleColor}}"
+                            custom-style="padding-left: 6px; width: 15px; height: 34px; padding-right: 14px;display:flex;align-items:center"
+                            bindtap="navigateBack"
+                        />
+                        <view wx:else style="padding-left: 16px"></view>
 
-                <view style="display: flex; align-items: center; justify-content: flex-start; flex: 1">
-                    <view style="color: {{titleColor}};font-size:{{titleSize}}; ">
-                        {{ title }}
+                        <!-- 标题（紧跟返回按钮） -->
+                        <view wx:if="{{ !useCustomCenter }}" style="display: flex; align-items: center; flex: 1; min-width: 0;">
+                            <van-image wx:if="{{titleIcon !== ''}}" fit="heightFix" height="{{capsuleHeight}}" src="{{titleIcon}}" style="flex-shrink: 0;" />
+                            <view style="color: {{titleColor}};font-size:{{titleSize}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;">
+                                {{ title }}
+                            </view>
+                        </view>
                     </view>
                 </view>
-                <view style="width: 15px; padding-right: 16px; padding-left: 14px"></view>
+
+                <!-- 中间区域：仅用于自定义内容，默认为空 -->
+                <view class="nav-bar-center" style="display: flex; align-items: center; justify-content: center; {{ useCustomCenter ? 'flex: 1;' : 'flex: 0;' }}">
+                    <!-- 自定义中间内容 -->
+                    <slot name="center" wx:if="{{ useCustomCenter }}"></slot>
+                </view>
+
+                <!-- 右侧区域：为小程序菜单预留空间，不放置任何内容 -->
+                <view class="nav-bar-right" style="{{ useCustomCenter ? 'width: 80px; flex-shrink: 0;' : 'min-width: 80px;' }}"></view>
             </view>
         </view>
         <view wx:if="{{useHolder}}" style="height:{{navBarHeight}}px;width:100%;"></view>
@@ -42,6 +56,9 @@
     import { useHperStore } from '../store/helper'
 
     createComponent({
+      options:{
+        multipleSlots: true
+      },
         properties: {
             // 开始渐变的高度
             startFade: {
@@ -97,6 +114,24 @@
             titleIcon: {
                 type: String,
                 value: ''
+            },
+
+            // 是否隐藏默认返回按钮（当使用左侧slot时）
+            hideBackButton: {
+                type: Boolean,
+                value: false
+            },
+
+            // 是否使用自定义左侧内容
+            useCustomLeft: {
+                type: Boolean,
+                value: false
+            },
+
+            // 是否使用自定义中间内容
+            useCustomCenter: {
+                type: Boolean,
+                value: false
             }
         },
         setup(props) {
@@ -139,13 +174,26 @@
     .capsule
         display flex
         align-items center
+    .nav-bar-left
+        display flex
+        align-items center
+        justify-content flex-start
+    .nav-bar-center
+        display flex
+        align-items center
+        justify-content center
+        flex 1
+    .nav-bar-right
+        // 预留给小程序菜单的空间
+        min-width 80px
 </style>
 
 <script type="application/json">
     {
         "component": true,
         "usingComponents": {
-            "van-icon": "@vant/weapp/icon/index"
+            "van-icon": "@vant/weapp/icon/index",
+            "van-image": "@vant/weapp/image/index"
         }
     }
 </script>
