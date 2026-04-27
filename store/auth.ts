@@ -1,9 +1,10 @@
+/* eslint-disable camelcase */
 import { ref, watch } from '@mpxjs/core';
 import { defineStore } from '@mpxjs/pinia';
 import { loadFromStorage, removeFromStorage, saveToStorage } from '../utils/storage';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { computed } from 'vue';
-import { normalizeUserInfo } from '../../utils/validator';
+import { normalizeUserInfo } from '../utils/validator';
 
 const AUTH_TOKEN = 'un_auth_token';
 

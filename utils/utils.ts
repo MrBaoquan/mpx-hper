@@ -1,5 +1,5 @@
 import { parseIDNumber } from './validator';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 
 // 根据用户身份证号分配用户头像
 export function getAvatarByIdCard(idCard: string): string {
@@ -60,7 +60,7 @@ export function generateRandomNumber(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export function debounce<T extends (...args: any[]) => void>(func: T, wait: number, immediate: boolean = false): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: any[]) => void>(func: T, wait: number, immediate = false): (...args: Parameters<T>) => void {
     let timeout: ReturnType<typeof setTimeout> | null;
 
     return function (...args: Parameters<T>): void {

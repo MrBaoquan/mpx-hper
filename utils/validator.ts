@@ -22,6 +22,20 @@ const validateTaiwan = (taiwan: string): boolean => {
     return reg.test(taiwan);
 };
 
+// 归一化用户信息结构，供权限模块统一读取角色字段
+const normalizeUserInfo = (rawUserData: any) => {
+    if (!rawUserData || typeof rawUserData !== 'object') {
+        return {};
+    }
+
+    const normalized = { ...rawUserData };
+    if (!Array.isArray(normalized.roles)) {
+        normalized.roles = [];
+    }
+
+    return normalized;
+};
+
 // 根据身份证号码获取出生日期，年龄、性别
 interface IDInfo {
     birthday: string;
@@ -47,4 +61,4 @@ const validatePhone = (phone: string): boolean => {
     return reg.test(phone);
 };
 
-export { validateIdCard, parseIDNumber, validatePhone, validatePassport, validateHKMacao, validateTaiwan };
+export { validateIdCard, parseIDNumber, validatePhone, validatePassport, validateHKMacao, validateTaiwan, normalizeUserInfo };
