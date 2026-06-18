@@ -132,6 +132,12 @@
             useCustomCenter: {
                 type: Boolean,
                 value: false
+            },
+
+            // 是否点击返回时直接回首页
+            backHome: {
+                type: Boolean,
+                value: false
             }
         },
         setup(props) {
@@ -152,6 +158,18 @@
             })
 
             const navigateBack = () => {
+                if ((props as any).backHome) {
+                    wx.switchTab({
+                        url: '/pages/index',
+                        fail() {
+                            wx.reLaunch({
+                                url: '/pages/index'
+                            })
+                        }
+                    })
+                    return
+                }
+
                 wx.navigateBack()
             }
 

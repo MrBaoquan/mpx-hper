@@ -7,6 +7,7 @@ import { computed } from 'vue';
 import { normalizeUserInfo } from '../utils/validator';
 
 const AUTH_TOKEN = 'un_auth_token';
+const OPEN_ID_STORAGE_KEY = 'szsng_openid';
 
 const checkAuthToken = (token: string): boolean => {
     return token !== AUTH_TOKEN && token !== '';
@@ -39,6 +40,7 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         api_token.value = AUTH_TOKEN;
         removeFromStorage('token_data');
         SetAuthResultCode(-1);
+        clearQueueToken();
         resetPermissions();
     };
 
@@ -88,9 +90,58 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         }
     }
 
-    const openID = ref('');
+    const openID = ref(String(loadFromStorage(OPEN_ID_STORAGE_KEY) || ''));
     function setOpenID(id: string) {
         openID.value = id;
+        if (id) {
+            saveToStorage(OPEN_ID_STORAGE_KEY, id);
+        } else {
+            removeFromStorage(OPEN_ID_STORAGE_KEY);
+        }
+    }
+
+    const loginPopupVisible = ref(false);
+    const loginPopupTitle = ref('手机号授权登录');
+    const loginPopupDescription = ref('请先完成手机号授权登录，再继续当前操作。');
+    const loginPopupBenefitText = ref('联系人管理、预约用户态信息以及需要登录态的后续流程。');
+
+    function showLoginPopup(options: {
+        title?: string;
+        description?: string;
+        benefitText?: string;
+    } = {}) {
+        loginPopupTitle.value = options.title || '手机号授权登录';
+        loginPopupDescription.value = options.description || '请先完成手机号授权登录，再继续当前操作。';
+        loginPopupBenefitText.value = options.benefitText || '联系人管理、预约用户态信息以及需要登录态的后续流程。';
+        loginPopupVisible.value = true;
+    }
+
+    function hideLoginPopup() {
+        loginPopupVisible.value = false;
+    }
+
+    const queueToken = ref('');
+    const queueTokenExpireAt = ref(0);
+
+    function setQueueToken(token: string, expireSeconds = 0) {
+        queueToken.value = token;
+        queueTokenExpireAt.value = expireSeconds > 0 ? Date.now() + expireSeconds * 1000 : 0;
+    }
+
+    function refreshQueueToken(expireSeconds = 300) {
+        if (queueToken.value === '') return;
+        queueTokenExpireAt.value = Date.now() + expireSeconds * 1000;
+    }
+
+    function clearQueueToken() {
+        queueToken.value = '';
+        queueTokenExpireAt.value = 0;
+    }
+
+    function hasValidQueueToken() {
+        if (queueToken.value === '') return false;
+        if (queueTokenExpireAt.value === 0) return true;
+        return queueTokenExpireAt.value > Date.now();
     }
 
     // ===== 权限接口：角色-权限映射与校验 =====
@@ -201,6 +252,18 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         SetAuthResultCode,
         openID,
         setOpenID,
+        loginPopupVisible,
+        loginPopupTitle,
+        loginPopupDescription,
+        loginPopupBenefitText,
+        showLoginPopup,
+        hideLoginPopup,
+        queueToken,
+        queueTokenExpireAt,
+        setQueueToken,
+        refreshQueueToken,
+        clearQueueToken,
+        hasValidQueueToken,
         transformUserData,
         // permissions api
         permissionMap,

@@ -21,11 +21,17 @@ const initMpxHper = (option: MHOption = defaultOption) => {
 
     mpx.xfetch.interceptors.request.use((config) => {
         const authStore = useAuthStore();
-        config.header = {
+        const header = {
             'x-token': authStore.api_token,
             Authorization: 'Bearer ' + authStore.api_token,
             ...config.header,
         };
+
+        if (__mpx_env__ === 'szsng' && authStore.queueToken) {
+            header['X-Queue-Token'] = authStore.queueToken;
+        }
+
+        config.header = header;
 
         return config;
     });
