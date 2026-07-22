@@ -104,12 +104,36 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
     const loginPopupTitle = ref('手机号授权登录');
     const loginPopupDescription = ref('请先完成手机号授权登录，再继续当前操作。');
     const loginPopupBenefitText = ref('联系人管理、预约用户态信息以及需要登录态的后续流程。');
+    const loginPopupHosts = new Map<string, number>();
 
-    function showLoginPopup(options: {
-        title?: string;
-        description?: string;
-        benefitText?: string;
-    } = {}) {
+    function registerLoginPopupHost(route: string) {
+        if (!route) return;
+        loginPopupHosts.set(route, (loginPopupHosts.get(route) || 0) + 1);
+    }
+
+    function unregisterLoginPopupHost(route: string) {
+        if (!route) return;
+        const count = loginPopupHosts.get(route) || 0;
+        if (count <= 1) {
+            loginPopupHosts.delete(route);
+            return;
+        }
+        loginPopupHosts.set(route, count - 1);
+    }
+
+    function hasLoginPopupHost() {
+        const pages = getCurrentPages();
+        const currentRoute = pages[pages.length - 1]?.route || '';
+        return (loginPopupHosts.get(currentRoute) || 0) > 0;
+    }
+
+    function showLoginPopup(
+        options: {
+            title?: string;
+            description?: string;
+            benefitText?: string;
+        } = {},
+    ) {
         loginPopupTitle.value = options.title || '手机号授权登录';
         loginPopupDescription.value = options.description || '请先完成手机号授权登录，再继续当前操作。';
         loginPopupBenefitText.value = options.benefitText || '联系人管理、预约用户态信息以及需要登录态的后续流程。';
@@ -256,6 +280,9 @@ export const useAuthStore = defineStore('mpxhper-auth', () => {
         loginPopupTitle,
         loginPopupDescription,
         loginPopupBenefitText,
+        registerLoginPopupHost,
+        unregisterLoginPopupHost,
+        hasLoginPopupHost,
         showLoginPopup,
         hideLoginPopup,
         queueToken,
