@@ -138,6 +138,12 @@
             backHome: {
                 type: Boolean,
                 value: false
+            },
+
+            // 是否在栈底也显示返回按钮（reLaunch 进入详情页等场景，点击回首页）
+            alwaysShowBack: {
+                type: Boolean,
+                value: false
             }
         },
         setup(props) {
@@ -154,11 +160,25 @@
             }
 
             const backBtn = computed(() => {
-                return getCurrentPages().length > 1
+                // alwaysShowBack 时栈底也显示（reLaunch 进入详情页，点击回首页）
+                return (props as any).alwaysShowBack || getCurrentPages().length > 1
             })
 
             const navigateBack = () => {
                 if ((props as any).backHome) {
+                    wx.switchTab({
+                        url: '/pages/index',
+                        fail() {
+                            wx.reLaunch({
+                                url: '/pages/index'
+                            })
+                        }
+                    })
+                    return
+                }
+
+                // 栈底（reLaunch/redirectTo 进入详情等场景）时返回首页，避免直接退出小程序
+                if (getCurrentPages().length <= 1) {
                     wx.switchTab({
                         url: '/pages/index',
                         fail() {
